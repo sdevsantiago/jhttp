@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{%-5level}{FATAL=red bold, ERROR=red, WARN=yellow, INFO=green, DEBUG=cyan, TRACE=white} --- [%style{%-8.8t}] %style{%-40.40logger{1.1.*.*}}{bright} - %msg%n"/>
+		</Console>
+	</Appenders>
+	<Loggers>
+		<Logger name="sdevsantiago.jhttp" level="debug" additivity="false">
+			<AppenderRef ref="Console"/>
+		</Logger>
+		<Root level="info">
+			<AppenderRef ref="Console"/>
+		</Root>
+	</Loggers>
+</Configuration>

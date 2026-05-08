@@ -1,0 +1,59 @@
+name: Sync TFG
+
+on:
+  push:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  update:
+    name: Sync TFG
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get repository name
+        id: repo_name
+        run: echo "repo_name=$(echo ${GITHUB_REPOSITORY} | cut -d'/' -f2)" >> $GITHUB_OUTPUT
+
+      - name: Git config
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Setup SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Checkout this repository
+        uses: actions/checkout@v5
+        with:
+          path: ${{ steps.repo_name.outputs.repo_name }}
+          fetch-depth: 1
+
+      - name: Checkout TFG repository
+        uses: actions/checkout@v5
+        with:
+          repository: sdevsantiago/2026-tfg-dam
+          path: tfg
+          submodules: false
+          fetch-depth: 1
+
+      - name: Init specific submodule
+        run: |
+          cd tfg
+          git submodule update --init --depth 1 ${{ steps.repo_name.outputs.repo_name }}
+
+      - name: Sync and commit
+        run: |
+          cd tfg
+          git remote set-url origin git@github.com:sdevsantiago/2026-tfg-dam.git
+          git submodule update --remote ${{ steps.repo_name.outputs.repo_name }}
+          if ! git diff --quiet; then
+            git commit -am "[${{ steps.repo_name.outputs.repo_name }}] $(cd ${{ steps.repo_name.outputs.repo_name }} && git log -n 1 --format=%B)"
+            git push
+          else
+            echo "Submodule already up to date."
+          fi

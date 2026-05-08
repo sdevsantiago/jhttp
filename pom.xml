@@ -6,7 +6,7 @@
 
 	<groupId>sdevsantiago</groupId>
 	<artifactId>jhttp</artifactId>
-	<version>0.9</version>
+	<version>0.1</version>
 
 	<name>JHTTP</name>
 	<description>A simple HTTP server in Java.</description>

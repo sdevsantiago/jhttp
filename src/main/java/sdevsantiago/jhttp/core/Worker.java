@@ -94,10 +94,10 @@ public class Worker implements Runnable {
 	}
 
 	private void read(final @NonNull SelectionKey key) throws IOException {
-		final var clientSocket = (SocketChannel) key.channel();
+		final var channel = (SocketChannel) key.channel();
 		final var buffer = ByteBuffer.allocate(BUFFER_SIZE);
 
-		final var bytesRead = clientSocket.read(buffer);
+		final var bytesRead = channel.read(buffer);
 
 		if (bytesRead == -1) {
 			closeKey(key);
@@ -122,10 +122,10 @@ public class Worker implements Runnable {
 	}
 
 	private void write(final @NonNull SelectionKey key) throws IOException {
-		final var clientSocket = (SocketChannel) key.channel();
+		final var channel = (SocketChannel) key.channel();
 		final var response = (ByteBuffer) key.attachment();
 
-		clientSocket.write(response);
+		channel.write(response);
 
 		if (response.hasRemaining()) {
 			return;

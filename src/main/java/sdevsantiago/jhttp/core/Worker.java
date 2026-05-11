@@ -108,6 +108,7 @@ public class Worker implements Runnable {
 
 		buffer.flip();
 		touchActivity(key);
+		log.debug("Request received ({} bytes)", bytesRead);
 
 		key.attach(
 			HttpResponseBuilder.ok("<!DOCTYPE html>"
@@ -117,7 +118,7 @@ public class Worker implements Runnable {
 		);
 
 		key.interestOps(SelectionKey.OP_WRITE);
-		log.debug("client ready to write");
+		log.debug("Response generated, switching to WRITE");
 	}
 
 	private void write(final @NonNull SelectionKey key) throws IOException {
@@ -131,6 +132,7 @@ public class Worker implements Runnable {
 		}
 
 		closeKey(key);
+		log.debug("Response sent");
 	}
 
 	private void evictIdleConnections() {

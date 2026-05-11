@@ -25,17 +25,21 @@ public class Acceptor implements Runnable {
 		while (running) {
 			try {
 				selector.select();
-			} catch (final IOException _) {}
+			} catch (final IOException e) {
+				log.error("An error occurred while selecting keys: ", e);
+			}
 
 			final var keys = selector.selectedKeys();
 			for (final var key : keys) {
-				try {
-					if (!key.isValid()) continue;
+				if (!key.isValid()) continue;
 
-					if (key.isAcceptable()) {
+				if (key.isAcceptable()) {
+					try {
 						accept(key);
+					} catch (final IOException e) {
+						log.error("An error occurred while accepting a key: ", e);
 					}
-				} catch (final Exception _) {}
+				}
 			}
 			keys.clear();
 		}

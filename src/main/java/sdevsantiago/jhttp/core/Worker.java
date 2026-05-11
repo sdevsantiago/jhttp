@@ -54,7 +54,8 @@ public class Worker implements Runnable {
 				processSelectedKeys();
 				evictIdleConnections();
 			}
-		} catch (final Exception _) {
+		} catch (final IOException e) {
+			log.error("An error occurred while selecting keys: ", e);
 		} finally {
 			closeAll();
 		}
@@ -87,6 +88,7 @@ public class Worker implements Runnable {
 					write(key);
 				}
 			} catch (final IOException e) {
+				log.error("An error occurred while processing a key: ", e);
 				key.cancel();
 			}
 		}
@@ -166,7 +168,9 @@ public class Worker implements Runnable {
 	private void closeChannel(final @NonNull Channel channel) {
 		try {
 			channel.close();
-		} catch (final IOException _) {}
+		} catch (final IOException e) {
+			log.error("An error occurred while closing a channel: ", e);
+		}
 	}
 
 }

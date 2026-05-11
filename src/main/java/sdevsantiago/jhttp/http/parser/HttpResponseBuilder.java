@@ -3,12 +3,13 @@ package sdevsantiago.jhttp.http.parser;
 import lombok.NonNull;
 import sdevsantiago.jhttp.util.StringUtils;
 
+import java.net.http.HttpResponse;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
 public class HttpResponseBuilder {
 
-	private static final String LINE_SEPARATOR = System.lineSeparator();
+	private static final String LINE_SEPARATOR = "\r\n";
 
 	/**
 	 * Builds a valid HTTP response.

@@ -15,6 +15,7 @@ public class Worker implements Runnable {
 
 	private static final long SELECT_TIMEOUT_MS = 1000;
 	private static final long IDLE_TIMEOUT_MS = 30000;
+	private static final int BUFFER_SIZE = 4096;
 
 	private final String name;
 	private final Selector selector;
@@ -94,7 +95,7 @@ public class Worker implements Runnable {
 
 	private void read(final @NonNull SelectionKey key) throws IOException {
 		final var clientSocket = (SocketChannel) key.channel();
-		final var buffer = ByteBuffer.allocate(4096);
+		final var buffer = ByteBuffer.allocate(BUFFER_SIZE);
 
 		final var bytesRead = clientSocket.read(buffer);
 

@@ -32,10 +32,10 @@ public class ServerBootstrap {
 		serverSocket.register(selector, SelectionKey.OP_ACCEPT);
 
 		final var workers = new Worker[]{
-			new Worker("a"),
-			new Worker("b"),
-			new Worker("c"),
-			new Worker("d")
+			new Worker(),
+			new Worker(),
+			new Worker(),
+			new Worker()
 		};
 		final var dispatcher = new Dispatcher(workers);
 		dispatcher.start();

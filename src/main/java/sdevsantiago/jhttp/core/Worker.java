@@ -17,15 +17,13 @@ public class Worker implements Runnable {
 	private static final long IDLE_TIMEOUT_MS = 30000;
 	private static final int BUFFER_SIZE = 4096;
 
-	private final String name;
 	private final Selector selector;
 
 	private volatile boolean running = true;
 
 	private final Queue<SocketChannel> pendingRegistrations = new ConcurrentLinkedQueue<>();
 
-	public Worker(@NonNull final String name) throws IOException {
-		this.name = name;
+	public Worker() throws IOException {
 		this.selector = Selector.open();
 	}
 
@@ -45,7 +43,7 @@ public class Worker implements Runnable {
 
 	@Override
 	public void run() {
-		log.info("[{}] worker started", name);
+		log.info("Worker started");
 
 		try {
 			while (running) {
@@ -68,9 +66,9 @@ public class Worker implements Runnable {
 			try {
 				channel.configureBlocking(false);
 				channel.register(selector, SelectionKey.OP_READ, System.currentTimeMillis());
-				log.debug("[{}] registered channel {}", name, channel);
+				log.debug("Registered channel {}", channel);
 			} catch (final IOException e) {
-				log.warn("[{}] failed to register channel: {}", name, e.getMessage());
+				log.warn("Failed to register channel: ", e);
 				closeChannel(channel);
 			}
 		}
@@ -141,8 +139,8 @@ public class Worker implements Runnable {
 			if (!key.isValid()) continue;
 			if (key.attachment() instanceof Long lastActivity
 				&& (now - lastActivity) > IDLE_TIMEOUT_MS) {
-				log.debug("[{}] evicting idle connection {}", name, key);
 				closeKey(key);
+				log.debug("Evicted idle connection {}", key);
 			}
 		}
 	}

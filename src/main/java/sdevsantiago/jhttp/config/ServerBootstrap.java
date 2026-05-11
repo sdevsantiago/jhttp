@@ -23,8 +23,8 @@ public class ServerBootstrap {
 	public void start() throws Exception {
 		serverSocket = ServerSocketChannel.open();
 
-		final var port = new InetSocketAddress(config.getPort());
-		serverSocket.bind(port);
+		final var address = new InetSocketAddress(config.getPort());
+		serverSocket.bind(address);
 		log.info("Server socket bound to port '{}'", serverSocket.socket().getLocalPort());
 		serverSocket.configureBlocking(false);
 

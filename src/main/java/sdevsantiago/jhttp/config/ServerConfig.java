@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public final class ServerConfig {
+public class ServerConfig {
 
 	@Builder.Default
 	private int port = 8080;

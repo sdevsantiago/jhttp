@@ -1,14 +1,14 @@
 package sdevsantiago.jhttp.config;
 
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Value;
 
-@Getter
 @Builder
+@Value
 public class ServerConfig {
 
 	@Builder.Default
-	private int port = 8080;
+	int port = 8080;
 
 	@Builder.Default
 	int workerPoolSize = 4;

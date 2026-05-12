@@ -5,6 +5,7 @@ import lombok.extern.log4j.Log4j2;
 import sdevsantiago.jhttp.core.Acceptor;
 import sdevsantiago.jhttp.core.Dispatcher;
 import sdevsantiago.jhttp.core.Worker;
+import sdevsantiago.jhttp.core.WorkerPool;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -31,19 +32,14 @@ public class ServerBootstrap {
 		final var selector = Selector.open();
 		serverSocket.register(selector, SelectionKey.OP_ACCEPT);
 
-		final var workers = new Worker[]{
-			new Worker(),
-			new Worker(),
-			new Worker(),
-			new Worker()
-		};
-		final var dispatcher = new Dispatcher(workers);
-		dispatcher.start();
+		final var workerPool = new WorkerPool(config.getWorkerPoolSize());
+		final var dispatcher = new Dispatcher(workerPool);
 
 		final var acceptor = new Acceptor(serverSocket, selector, dispatcher);
 		final var acceptorThread = new Thread(acceptor, "acceptor");
-
 		acceptorThread.setDaemon(false);
+
+		workerPool.start();
 		acceptorThread.start();
 	}
 

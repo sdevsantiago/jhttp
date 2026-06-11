@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
+	<Properties>
+		<Property name="logLevel">${log4j.level}</Property>
+	</Properties>
 	<Appenders>
 		<Console name="Console" target="SYSTEM_OUT">
 			<PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSSXXX} %highlight{%-5level}{FATAL=red bold, ERROR=red, WARN=yellow, INFO=green, DEBUG=cyan, TRACE=white} --- [%style{%-8.8t}] %style{%-40.40logger{39}}{bright} : %msg%n"/>
@@ -9,8 +12,12 @@
 		<Logger name="sdevsantiago.jhttp" level="debug" additivity="false">
 			<AppenderRef ref="Console"/>
 		</Logger>
-		<Root level="info">
+		<Root level="${logLevel}">
 			<AppenderRef ref="Console"/>
 		</Root>
+
+		<Logger name="org.reflections" level="warn" additivity="false">
+			<AppenderRef ref="Console"/>
+		</Logger>
 	</Loggers>
 </Configuration>

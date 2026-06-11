@@ -4,64 +4,29 @@ import lombok.*;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
 
 @RequiredArgsConstructor
 @Log4j2
 public class Acceptor implements Runnable {
 
-	private final @NonNull ServerSocketChannel serverSocket;
-	private final @NonNull Selector selector;
-	private final @NonNull Dispatcher dispatcher;
-
-	private volatile boolean running = true;
+	private final @NonNull ServerSocket serverSocket;
+	private final @NonNull Executor executor;
 
 	@Override
 	public void run() {
-		log.info("Server running");
-
-		while (running) {
+		while (!Thread.currentThread().isInterrupted()) {
 			try {
-				selector.select();
+				final var socket = serverSocket.accept();
+
+				final var address = socket.getInetAddress();
+				log.debug("Accepted connection from {}", address);
+
+				executor.getExecutorService().submit(() -> executor.handleConnection(socket));
 			} catch (final IOException e) {
-				log.error("An error occurred while selecting keys: ", e);
+				log.error("Error handling connection", e);
 			}
-
-			final var keys = selector.selectedKeys();
-			for (final var key : keys) {
-				if (!key.isValid()) continue;
-
-				if (key.isAcceptable()) {
-					try {
-						accept(key);
-					} catch (final IOException e) {
-						log.error("An error occurred while accepting a key: ", e);
-					}
-				}
-			}
-			keys.clear();
-		}
-	}
-
-	private void accept(final @NonNull SelectionKey key) throws IOException {
-		final var server = (ServerSocketChannel) key.channel();
-		final var client = server.accept();
-
-		if (client == null) return;
-
-		client.configureBlocking(false);
-		dispatcher.dispatch(client);
-	}
-
-	public void stop() {
-		running = false;
-		try {
-			serverSocket.close();
-		} catch (final IOException e) {
-			log.fatal("Failed to close server socket, forcing shut down", e);
-			System.exit(1);
 		}
 	}
 

@@ -6,7 +6,7 @@
 
 	<groupId>sdevsantiago</groupId>
 	<artifactId>jhttp</artifactId>
-	<version>0.1</version>
+	<version>1.0</version>
 
 	<name>JHTTP</name>
 	<description>A simple HTTP server in Java.</description>
@@ -35,9 +35,15 @@
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
+			<properties>
+				<log4j.level>debug</log4j.level>
+			</properties>
 		</profile>
 		<profile>
 			<id>prod</id>
+			<properties>
+				<log4j.level>info</log4j.level>
+			</properties>
 		</profile>
 	</profiles>
 
@@ -48,6 +54,13 @@
 			<artifactId>lombok</artifactId>
 			<version>1.18.44</version>
 			<scope>provided</scope>
+		</dependency>
+
+		<!-- Reflections -> allows module discovery -->
+		<dependency>
+			<groupId>org.reflections</groupId>
+			<artifactId>reflections</artifactId>
+			<version>0.10.2</version>
 		</dependency>
 
 		<!-- JUnit -->
@@ -65,9 +78,22 @@
 			<version>2.25.4</version>
 		</dependency>
 
+		<!-- Slf4j implementation for Log4j2 -->
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j-impl</artifactId>
+			<version>2.23.1</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 		<plugins>
 			<!-- Maven Compiler -->
 			<plugin>
@@ -95,6 +121,8 @@
 							<goal>shade</goal>
 						</goals>
 						<configuration>
+							<shadedArtifactAttached>false</shadedArtifactAttached>
+							<createDependencyReducedPom>false</createDependencyReducedPom>
 							<transformers>
 								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 									<mainClass>sdevsantiago.jhttp.JHTTP</mainClass>
